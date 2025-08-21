@@ -16,47 +16,78 @@ import {
   Affix,
   TextInput,
   Select,
-  NumberInput,
+  Loader,
+  Center,
 } from "@mantine/core";
 import { AlertCircle, Plus } from "lucide-react";
+import { useDebouncedValue, useIntersection } from "@mantine/hooks";
 import { fetchEditions, deleteEdition } from "@/app/lib/api.js";
 import { Loading } from "@/components/Loading";
 
 export default function EditionsPage() {
   const router = useRouter();
   const [editions, setEditions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 500);
   const [status, setStatus] = useState(undefined);
   const [sortBy, setSortBy] = useState("published_at");
   const [order, setOrder] = useState("desc");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(12);
 
-  const loadEditions = async () => {
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const { ref, entry } = useIntersection({
+    root: null,
+    threshold: 1,
+  });
+
+  const loadEditions = async (reset = false) => {
     setLoading(true);
     try {
       const data = await fetchEditions({
-        search,
+        search: debouncedSearch,
         status,
         sortBy,
         order,
-        page,
-        limit,
+        page: reset ? 1 : page,
+        limit: 12,
       });
-      setEditions(data.results);
+
+      if (reset) {
+        setEditions(data.results);
+      } else {
+        setEditions((prev) => [...prev, ...data.results]);
+      }
+
+      setHasMore(data.results.length > 0);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    loadEditions();
-  }, [search, status, sortBy, order, page, limit]);
+    setPage(1);
+    setHasMore(true);
+    loadEditions(true);
+  }, [debouncedSearch, status, sortBy, order]);
+
+  useEffect(() => {
+    if (entry?.isIntersecting && hasMore && !loading) {
+      setPage((prev) => prev + 1);
+    }
+  }, [entry, hasMore, loading]);
+
+  useEffect(() => {
+    if (page > 1) {
+      loadEditions();
+    }
+  }, [page]);
 
   const handleDelete = async (id) => {
     if (deleteConfirm !== id) {
@@ -72,7 +103,7 @@ export default function EditionsPage() {
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading && editions.length === 0) return <Loading />;
 
   return (
     <Stack spacing="xl" p="xl">
@@ -86,14 +117,14 @@ export default function EditionsPage() {
       )}
 
       <SimpleGrid
-        cols={{ base: 2, xs: 3, md: 6 }}
+        cols={{ base: 2, sm: 4 }}
         spacing="xl"
         mb="xl"
         verticalSpacing="md">
         {[
           <TextInput
             placeholder="Search by name"
-            label=" "
+            label="Search"
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
           />,
@@ -125,18 +156,6 @@ export default function EditionsPage() {
             ]}
             value={order}
             onChange={setOrder}
-          />,
-          <NumberInput
-            label="Page"
-            min={1}
-            value={page}
-            onChange={(val) => setPage(val || 1)}
-          />,
-          <NumberInput
-            label="Limit"
-            min={1}
-            value={limit}
-            onChange={(val) => setLimit(val || 12)}
           />,
         ].map((input, idx) => (
           <div
@@ -179,8 +198,8 @@ export default function EditionsPage() {
             </Card.Section>
 
             <Stack spacing="xs" mt="sm">
-              <Group position="apart">
-                <Text weight={700} size="lg">
+              <Group justify="space-between">
+                <Text fw={700} size="lg">
                   {edition.name}
                 </Text>
                 <Badge color={edition.status ? "green" : "red"} variant="light">
@@ -216,6 +235,12 @@ export default function EditionsPage() {
           </Card>
         ))}
       </SimpleGrid>
+
+      {hasMore && (
+        <Center ref={ref} mt="lg">
+          {loading ? <Loader /> : <Loader type="dots" />}
+        </Center>
+      )}
 
       <Affix right="5vw" bottom="4.5vw">
         <Button
