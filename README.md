@@ -25,7 +25,7 @@ Task: https://docs.google.com/document/d/10oBrJ2BL-ZXLJWWBKfOeahG83xDLFRMJsW_GFL
 
 ### Working Demo Links
 
-[Video Demo](google.com)
+[Video Demo](https://drive.google.com/file/d/1FLCn-tWStbZhVRT0qfT1hfCWlvNgBzW6/view?usp=sharing)
 [Deployed Frontend](https://dtu-times-recruitment-task.vercel.app/)
 [Deployed Backend](https://dtu-times-recruitment-task.onrender.com)
 
