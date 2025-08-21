@@ -1,0 +1,24 @@
+.customAnchor {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.customAnchor::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-bottom: 1.7px solid var(--mantine-color-primary-5);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.customAnchor:hover::after {
+  transform: scaleX(1);
+}

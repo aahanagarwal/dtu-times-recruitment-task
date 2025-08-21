@@ -1,27 +1,25 @@
 {
-  "name": "dtu-times-recruitment_task",
+  "name": "dtu-times-recruitment-task",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "server": "node server/index.js"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.24.2",
-    "@emotion/react": "^11.14.0",
-    "express": "^5.1.0",
-    "json-server": "^0.17.4",
+    "@mantine/core": "^8.2.5",
+    "@mantine/form": "^8.2.5",
+    "@mantine/hooks": "^8.2.5",
+    "lucide-react": "^0.540.0",
     "next": "15.3.5",
-    "next-themes": "^0.4.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "postcss": "^8.5.6",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1"
   }
 }
