@@ -29,6 +29,8 @@ Task: https://docs.google.com/document/d/10oBrJ2BL-ZXLJWWBKfOeahG83xDLFRMJsW_GFL
 [Deployed Frontend](https://dtu-times-recruitment-task.vercel.app/)
 [Deployed Backend](https://dtu-times-recruitment-task.onrender.com)
 
+\* Note: the API has been hosted on render's free tier, which puts it into sleep mode after sometime of inactivity. When trying to access `/editions`, it could take upto 50 seconds for the page to load for the 1st time.
+
 ---
 
 ### Tech Stack
